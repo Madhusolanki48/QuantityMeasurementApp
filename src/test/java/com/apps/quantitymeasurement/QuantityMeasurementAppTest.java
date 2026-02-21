@@ -63,4 +63,49 @@ public class QuantityMeasurementAppTest {
 		assertThrows(IllegalArgumentException.class, () -> new QuantityLength(1.0, null));
 	}
 	
+	// UC-4 : Extended Unit Support - Yards & Centimeters
+
+	// verifies yard to yard equality
+	@Test
+	void testEquality_YardToYard_SameValue() {
+		QuantityLength q1 = new QuantityLength(1.0, LengthUnit.YARDS);
+		QuantityLength q2 = new QuantityLength(1.0, LengthUnit.YARDS);
+		assertTrue(q1.equals(q2));
+	}
+
+	// verifies yard to feet conversion
+	@Test
+	void testEquality_YardToFeet_EquivalentValue() {
+		QuantityLength q1 = new QuantityLength(1.0, LengthUnit.YARDS);
+		QuantityLength q2 = new QuantityLength(3.0, LengthUnit.FEET);
+		assertTrue(q1.equals(q2));
+	}
+
+	// verifies yard to inches conversion
+	@Test
+	void testEquality_YardToInches_EquivalentValue() {
+		QuantityLength q1 = new QuantityLength(1.0, LengthUnit.YARDS);
+		QuantityLength q2 = new QuantityLength(36.0, LengthUnit.INCH);
+		assertTrue(q1.equals(q2));
+	}
+
+	// verifies centimeters to inches conversion
+	@Test
+	void testEquality_CentimeterToInch_EquivalentValue() {
+		QuantityLength q1 = new QuantityLength(1.0, LengthUnit.CENTIMETERS);
+		QuantityLength q2 = new QuantityLength(0.393701, LengthUnit.INCH);
+		assertTrue(q1.equals(q2));
+	}
+
+	// verifies multi-unit transitive property
+	@Test
+	void testEquality_MultiUnit_TransitiveProperty() {
+		QuantityLength yard = new QuantityLength(1.0, LengthUnit.YARDS);
+		QuantityLength feet = new QuantityLength(3.0, LengthUnit.FEET);
+		QuantityLength inch = new QuantityLength(36.0, LengthUnit.INCH);
+		assertTrue(yard.equals(feet));
+		assertTrue(feet.equals(inch));
+		assertTrue(yard.equals(inch));
+	}
+
 }
