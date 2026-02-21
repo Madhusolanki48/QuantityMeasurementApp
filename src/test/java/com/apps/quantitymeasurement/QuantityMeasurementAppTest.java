@@ -2,9 +2,10 @@ package com.apps.quantitymeasurement;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 import com.apps.quantitymeasurement.QuantityMeasurementApp.Feet;
+import com.apps.quantitymeasurement.QuantityMeasurementApp.Inches;
 
 public class QuantityMeasurementAppTest {
-    // UC-1
+    // -------------------------  UC-1 Feet Tests ------------------------
     //verifies that two Feet objects with the same value are equal
     @Test
     void testEquality_SameValue() {
@@ -42,4 +43,34 @@ public class QuantityMeasurementAppTest {
         Object obj = new Object();
         assertFalse(f1.equals(obj), "Feet should not equal different object type");
     }
+	// -------------------------- UC-2 Inches Tests ---------------------
+
+	@Test
+	void testInchesEquality_SameValue() {
+		Inches i1 = new Inches(1.0);
+		Inches i2 = new Inches(1.0);
+		assertTrue(i1.equals(i2), "1.0 inch should equal 1.0 inch");
+	}
+	@Test
+	void testInchesEquality_DifferentValue() {
+		Inches i1 = new Inches(1.0);
+		Inches i2 = new Inches(2.0);
+		assertFalse(i1.equals(i2), "1.0 inch should not equal 2.0 inch");
+	}
+
+	@Test
+	void testInchesEquality_NullComparison() {
+		Inches i1 = new Inches(1.0);
+		assertFalse(i1.equals(null), "Inches should not equal null");
+	}
+	@Test
+	void testInchesEquality_SameReference() {
+		Inches i1 = new Inches(1.0);
+		assertFalse(i1.equals(i1), "Object must equal itself");
+	}
+	@Test
+	void testInchesEquality_DifferentClass() {
+		Inches i1 = new Inches(1.0);
+		assertFalse(i1.equals(new Object()), "Inches should not equal different type");
+	}
 }
