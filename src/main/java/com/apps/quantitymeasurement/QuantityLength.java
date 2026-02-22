@@ -48,4 +48,30 @@ public class QuantityLength {
     public int hashCode() {
         return Double.hashCode(toBaseUnit());
     }
+
+	// UC-5 : Unit-to-Unit Conversion
+	// method to convert a numeric value from source unit to target unit
+	public static double convert(double value, LengthUnit source, LengthUnit target) {
+
+		// validate numeric value
+		if (!Double.isFinite(value)) {
+			throw new IllegalArgumentException("Value must be finite");
+		}
+
+		// validate units
+		if (source == null || target == null) {
+			throw new IllegalArgumentException("Units cannot be null");
+		}
+
+		// normalize to base unit feet
+		double valueInFeet = source.toFeet(value);
+
+		// convert from base unit to target unit
+		return valueInFeet / target.toFeet(1.0);
+	}
+
+	// instance method to convert this quantity to target unit
+	public double convertTo(LengthUnit targetUnit) {
+		return convert(this.value, this.unit, targetUnit);
+	}
 }
