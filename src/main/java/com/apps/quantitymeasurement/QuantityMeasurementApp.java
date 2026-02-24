@@ -15,10 +15,14 @@ public class QuantityMeasurementApp {
         //UC-5 : Unit-to-Unit Conversion
         QuantityLength yard = new QuantityLength(1.0, LengthUnit.YARDS);
         double inches = QuantityLength.convert(1.0, LengthUnit.FEET, LengthUnit.INCH);
+        
+        //UC-7
+        QuantityLength r = q1.add(q2, LengthUnit.YARDS);
 
         System.out.println("Feet comparison result: " + q1.equals(q2));
         System.out.println("Inches comparison result: " + q3.equals(q4));
         System.out.println("1 foot in inches = " + inches);
         System.out.println("1 yard in feet = " + yard.convertTo(LengthUnit.FEET));
+        System.out.println("Explicit target (yards): " + r.getValue());
     }
 }

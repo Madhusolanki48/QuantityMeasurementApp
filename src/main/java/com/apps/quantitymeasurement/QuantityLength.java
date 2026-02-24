@@ -109,4 +109,33 @@ public class QuantityLength {
 		}
 		return q1.add(q2);
 	}
+
+	// UC-7 : Addition with Explicit Target Unit
+	public QuantityLength add(QuantityLength other, LengthUnit targetUnit) {
+
+		// validation
+		if (other == null) {
+			throw new IllegalArgumentException("Other quantity cannot be null");
+		}
+
+		if (targetUnit == null) {
+			throw new IllegalArgumentException("Target unit cannot be null");
+		}
+
+		if (!Double.isFinite(this.value) || !Double.isFinite(other.value)) {
+			throw new IllegalArgumentException("Values must be finite");
+		}
+
+		// convert both to base unit feet
+		double thisInFeet = this.unit.toFeet(this.value);
+		double otherInFeet = other.unit.toFeet(other.value);
+
+		// add in base unit
+		double sumInFeet = thisInFeet + otherInFeet;
+
+		// convert to explicit target unit
+		double resultValue = sumInFeet / targetUnit.toFeet(1.0);
+
+		return new QuantityLength(resultValue, targetUnit);
+	}
 }
