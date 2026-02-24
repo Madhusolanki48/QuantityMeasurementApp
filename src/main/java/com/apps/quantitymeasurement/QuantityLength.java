@@ -74,4 +74,39 @@ public class QuantityLength {
 	public double convertTo(LengthUnit targetUnit) {
 		return convert(this.value, this.unit, targetUnit);
 	}
+	
+	// UC-6 : Addition of Two Length Units
+	// method to add another QuantityLength to this
+	// result is returned in the unit of this instance.
+	public QuantityLength add(QuantityLength other) {
+
+		// validation
+		if (other == null) {
+			throw new IllegalArgumentException("Other quantity cannot be null");
+		}
+
+		if (!Double.isFinite(this.value) || !Double.isFinite(other.value)) {
+			throw new IllegalArgumentException("Values must be finite");
+		}
+
+		// convert both to base unit feet
+		double thisInFeet = this.unit.toFeet(this.value);
+		double otherInFeet = other.unit.toFeet(other.value);
+
+		// add in base unit
+		double sumInFeet = thisInFeet + otherInFeet;
+
+		// convert back to unit of first operand
+		double resultValue = sumInFeet / this.unit.toFeet(1.0);
+
+		return new QuantityLength(resultValue, this.unit);
+	}
+
+	//method to add two quantities
+	public static QuantityLength add(QuantityLength q1, QuantityLength q2) {
+		if (q1 == null) {
+			throw new IllegalArgumentException("First quantity cannot be null");
+		}
+		return q1.add(q2);
+	}
 }
