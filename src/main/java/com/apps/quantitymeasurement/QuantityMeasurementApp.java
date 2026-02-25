@@ -1,24 +1,58 @@
 package com.apps.quantitymeasurement;
 
 public class QuantityMeasurementApp {
-	//main method 
+	// UC-4 : Extended Unit Support - Yards & Centimeters
+	// generic method to demonstrate Length equality check
+	public static boolean demonstrateLengthEquality(Length length1, Length length2) {
+		if (length1 == null || length2 == null) {
+			throw new IllegalArgumentException("Length cannot be null!");
+		}
+
+		boolean result = length1.equals(length2);
+		System.out.println("Comparing " + length1 + " and " + length2);
+		System.out.println("Are Equal? " + result);
+		System.out.println("-----------------------------------");
+		return result;
+	}
+
+	// overloaded method to accept raw values and units
+	public static boolean demonstrateLengthComparison(double value1, Length.LengthUnit unit1, double value2,
+			Length.LengthUnit unit2) {
+		Length length1 = new Length(value1, unit1);
+		Length length2 = new Length(value2, unit2);
+
+		return demonstrateLengthEquality(length1, length2);
+	}
+	public static Length demonstrateLengthConversion(double value, Length.LengthUnit fromUnit,
+			Length.LengthUnit toUnit) {
+
+		Length length = new Length(value, fromUnit);
+		Length converted = length.convertTo(toUnit);
+
+		System.out.println("Convert(" + value + ", " + fromUnit + ", " + toUnit + ") = " + converted);
+		System.out.println("----------------------------------");
+
+		return converted;
+	}
+
+	public static Length demonstrateLengthConversion(Length length, Length.LengthUnit toUnit) {
+
+		Length converted = length.convertTo(toUnit);
+
+		System.out.println("Convert(" + length + " -> " + toUnit + ") = " + converted);
+		System.out.println("----------------------------------");
+
+		return converted;
+	}
+
 	public static void main(String[] args) {
 		System.out.println("--------  Welcome to Quantity Measurement App  --------");
 		System.out.println("-------------------------------------------------------");
-		//UC-3 : Generic QuantityLength for DRY principle
-        QuantityLength q1 = new QuantityLength(1.0, LengthUnit.FEET);
-        QuantityLength q2 = new QuantityLength(12.0, LengthUnit.INCH);
-
-        QuantityLength q3 = new QuantityLength(1.0, LengthUnit.INCH);
-        QuantityLength q4 = new QuantityLength(1.0, LengthUnit.INCH);
-        
-        //UC-5 : Unit-to-Unit Conversion
-        QuantityLength yard = new QuantityLength(1.0, LengthUnit.YARDS);
-        double inches = QuantityLength.convert(1.0, LengthUnit.FEET, LengthUnit.INCH);
-
-        System.out.println("Feet comparison result: " + q1.equals(q2));
-        System.out.println("Inches comparison result: " + q3.equals(q4));
-        System.out.println("1 foot in inches = " + inches);
-        System.out.println("1 yard in feet = " + yard.convertTo(LengthUnit.FEET));
-    }
+		demonstrateLengthConversion(1.0, Length.LengthUnit.FEET, Length.LengthUnit.INCH);
+		demonstrateLengthConversion(3.0, Length.LengthUnit.YARDS, Length.LengthUnit.FEET);
+		demonstrateLengthConversion(36.0, Length.LengthUnit.INCH, Length.LengthUnit.YARDS);
+		demonstrateLengthConversion(1.0, Length.LengthUnit.CENTIMETERS, Length.LengthUnit.INCH);
+		demonstrateLengthConversion(0.0, Length.LengthUnit.FEET, Length.LengthUnit.INCH);
+		demonstrateLengthComparison(1.0, Length.LengthUnit.FEET, 12.0, Length.LengthUnit.INCH);
+	}
 }
