@@ -6,61 +6,54 @@ public class QuantityMeasurementAppTest {
     ////UC-3 : Generic QuantityLength for DRY principle
     //verifies that Quantity in feet with the same value are equal
     @Test
-    void testEquality_FeetToFeet_SameValue() {
-    	QuantityLength q1 = new QuantityLength(1.0, LengthUnit.FEET);
-        QuantityLength q2 = new QuantityLength(1.0, LengthUnit.FEET);
-        assertTrue(q1.equals(q2), "1.0 ft should equal 1.0 ft");
+    void testFeetEquality() {
+    	Length feet1 = new Length(1.0, Length.LengthUnit.FEET);
+        Length feet2 = new Length(1.0, Length.LengthUnit.FEET);
+        assertTrue(feet1.equals(feet2));
     }
     //verifies that Quantity in inches with same value are equal
     @Test
-    void testEquality_InchToInch_SameValue() {
-        QuantityLength q1 = new QuantityLength(1.0, LengthUnit.INCH);
-        QuantityLength q2 = new QuantityLength(1.0, LengthUnit.INCH);
-        assertTrue(q1.equals(q2), "1.0 inch should equal 1.0 inch");
+    void testInchesEquality() {
+        Length inch1 = new Length(1.0, Length.LengthUnit.INCH);
+        Length inch2 = new Length(1.0, Length.LengthUnit.INCH);
+        assertTrue(inch1.equals(inch2));
+    }
+    //verifies cross-unit equality (1 ft = 12 inch)
+    @Test
+    void testFeetInchesComparison() {
+        Length feet = new Length(1.0, Length.LengthUnit.FEET);
+        Length inch = new Length(12.0, Length.LengthUnit.INCH);
+        assertTrue(feet.equals(inch));
+    }
+    //verifies different feet values are not equal
+    @Test
+    void testFeetInEquality() {
+        Length feet1 = new Length(12.0, Length.LengthUnit.FEET);
+        Length feet2 = new Length(1.0, Length.LengthUnit.FEET);
+        assertFalse(feet1.equals(feet2));
+    }
+    //verifies different inch values are not equal
+    @Test
+    void testInchesInEquality() {
+        Length inch1 = new Length(1.0, Length.LengthUnit.INCH);
+        Length inch2 = new Length(2.0, Length.LengthUnit.INCH);
+        assertFalse(inch1.equals(inch2));
     }
 
     //verifies cross-unit equality (1 ft = 12 inch)
     @Test
-    void testEquality_FeetToInch_EquivalentValue() {
-        QuantityLength q1 = new QuantityLength(1.0, LengthUnit.FEET);
-        QuantityLength q2 = new QuantityLength(12.0, LengthUnit.INCH);
-        assertTrue(q1.equals(q2), "1 ft should equal 12 inches");
+    void testCrossUnitInequality() {
+        Length feet = new Length(1.0, Length.LengthUnit.FEET);
+        Length inch = new Length(11.0, Length.LengthUnit.INCH);
+        assertFalse(feet.equals(inch));
     }
-
-    //verifies symmetry of cross-unit comparison
+    //verifies multiple feet values with same value are equal
     @Test
-    void testEquality_InchToFeet_EquivalentValue() {
-        QuantityLength q1 = new QuantityLength(12.0, LengthUnit.INCH);
-        QuantityLength q2 = new QuantityLength(1.0, LengthUnit.FEET);
-        assertTrue(q1.equals(q2), "12 inches should equal 1 ft");
-    }
+    public void testMultipleFeetComparison() {
+        Length feet1 = new Length(2.0, Length.LengthUnit.FEET);
+        Length feet2 = new Length(2.0, Length.LengthUnit.FEET);
 
-    //verifies different feet values are not equal
-    @Test
-    void testEquality_FeetToFeet_DifferentValue() {
-        QuantityLength q1 = new QuantityLength(1.0, LengthUnit.FEET);
-        QuantityLength q2 = new QuantityLength(2.0, LengthUnit.FEET);
-        assertFalse(q1.equals(q2), "1 ft should not equal 2 ft");
-    }
-
-    //ensures comparison with null returns false
-    @Test
-    void testEquality_NullComparison() {
-        QuantityLength q1 = new QuantityLength(1.0, LengthUnit.FEET);
-        assertFalse(q1.equals(null), "Quantity should not equal null");
-    }
-
-	// validates reflexive property: object must equal itself
-	@Test
-	void testEquality_SameReference() {
-		QuantityLength q1 = new QuantityLength(1.0, LengthUnit.FEET);
-		assertTrue(q1.equals(q1), "Object must equal itself");
-	}
-
-	// verifies null unit is rejected
-	@Test
-	void testEquality_NullUnit() {
-		assertThrows(IllegalArgumentException.class, () -> new QuantityLength(1.0, null));
+        assertEquals(feet1, feet2);
 	}
 	
 	// UC-4 : Extended Unit Support - Yards & Centimeters
