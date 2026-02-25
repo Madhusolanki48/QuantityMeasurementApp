@@ -58,47 +58,79 @@ public class QuantityMeasurementAppTest {
 	
 	// UC-4 : Extended Unit Support - Yards & Centimeters
 
-	// verifies yard to yard equality
+	// verifies 1 yard equals 36 inches
 	@Test
-	void testEquality_YardToYard_SameValue() {
-		QuantityLength q1 = new QuantityLength(1.0, LengthUnit.YARDS);
-		QuantityLength q2 = new QuantityLength(1.0, LengthUnit.YARDS);
-		assertTrue(q1.equals(q2));
+	void testEquals36Inches() {
+		Length yard = new Length(1.0, Length.LengthUnit.YARDS);
+		Length inch = new Length(36.0, Length.LengthUnit.INCH);
+		assertTrue(yard.equals(inch));
 	}
 
-	// verifies yard to feet conversion
+	// verifies 1 cm equals 0.393701 inches
 	@Test
-	void testEquality_YardToFeet_EquivalentValue() {
-		QuantityLength q1 = new QuantityLength(1.0, LengthUnit.YARDS);
-		QuantityLength q2 = new QuantityLength(3.0, LengthUnit.FEET);
-		assertTrue(q1.equals(q2));
+	void centimeterEquals39Point3701Inches() {
+		Length cm = new Length(1.0, Length.LengthUnit.CENTIMETERS);
+		Length inch = new Length(0.393701, Length.LengthUnit.INCH);
+		assertTrue(cm.equals(inch));
 	}
 
-	// verifies yard to inches conversion
+	// verifies 3 feet equals 1 yard
 	@Test
-	void testEquality_YardToInches_EquivalentValue() {
-		QuantityLength q1 = new QuantityLength(1.0, LengthUnit.YARDS);
-		QuantityLength q2 = new QuantityLength(36.0, LengthUnit.INCH);
-		assertTrue(q1.equals(q2));
+	void threeFeetEqualsOneYard() {
+		Length feet = new Length(3, Length.LengthUnit.FEET);
+		Length yard = new Length(1, Length.LengthUnit.YARDS);
+		assertTrue(feet.equals(yard));
+	}
+	// verifies 30.48 centimeters equals 1 foot (using conversion factors)
+	@Test
+	public void thirtyPoint48CmEqualsOneFoot() {
+		double cmInInches = 30.48 * Length.LengthUnit.CENTIMETERS.getConversionFactor();
+		double footInInches = 1.0 * Length.LengthUnit.FEET.getConversionFactor();
+		assertEquals(cmInInches, footInInches, 0.001);
 	}
 
-	// verifies centimeters to inches conversion
+	// verifies yard is not equal to 12 inches
 	@Test
-	void testEquality_CentimeterToInch_EquivalentValue() {
-		QuantityLength q1 = new QuantityLength(1.0, LengthUnit.CENTIMETERS);
-		QuantityLength q2 = new QuantityLength(0.393701, LengthUnit.INCH);
-		assertTrue(q1.equals(q2));
+	void yardNotEqualToInches() {
+		Length yard = new Length(1.0, Length.LengthUnit.YARDS);
+		Length inch = new Length(12.0, Length.LengthUnit.INCH);
+		assertFalse(yard.equals(inch));
+	}
+	// verifies reference equality (same object comparison)
+	@Test
+	public void referenceEqualitySameObject() {
+		Length length = new Length(1.0, Length.LengthUnit.FEET);
+		assertEquals(length, length);
+	}
+	// verifies equals method returns false when compared with null
+	@Test
+	public void equalsReturnsFalseForNull() {
+		Length length = new Length(1.0, Length.LengthUnit.FEET);
+		assertNotEquals(length, null);
 	}
 
-	// verifies multi-unit transitive property
+	// verifies reflexive, symmetric, and transitive properties of equals
 	@Test
-	void testEquality_MultiUnit_TransitiveProperty() {
-		QuantityLength yard = new QuantityLength(1.0, LengthUnit.YARDS);
-		QuantityLength feet = new QuantityLength(3.0, LengthUnit.FEET);
-		QuantityLength inch = new QuantityLength(36.0, LengthUnit.INCH);
+	void reflexiveSymmetricAndTransitiveProperty() {
+		Length yard = new Length(1.0, Length.LengthUnit.YARDS);
+		Length feet = new Length(3.0, Length.LengthUnit.FEET);
+		Length inch = new Length(36.0, Length.LengthUnit.INCH);
 		assertTrue(yard.equals(feet));
 		assertTrue(feet.equals(inch));
 		assertTrue(yard.equals(inch));
+	}
+	// verifies different values of same unit are not equal
+	@Test
+	public void differentValuesSameUnitNotEqual() {
+		Length l1 = new Length(1.0, Length.LengthUnit.CENTIMETERS);
+		Length l2 = new Length(2.0, Length.LengthUnit.CENTIMETERS);
+		assertNotEquals(l1, l2);
+	}
+	// verifies cross-unit equality using demonstrateLengthComparison method
+	@Test
+	public void crossUnitEqualityDemonstrateMethod() {
+		assertTrue(QuantityMeasurementApp.demonstrateLengthComparison(1.0, Length.LengthUnit.YARDS, 3.0,
+				Length.LengthUnit.FEET));
 	}
 
 }

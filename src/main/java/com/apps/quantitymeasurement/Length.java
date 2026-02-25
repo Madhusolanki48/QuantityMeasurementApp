@@ -8,7 +8,11 @@ public class Length {
 
 	public enum LengthUnit {
 
-		FEET(12.0), INCH(1.0);
+		FEET(12.0),            //1 Feet=12 inches
+		INCH(1.0),             //base unit
+		//UC-4
+		YARDS(36.0),           // 1 yard = 36 inches
+	    CENTIMETERS(0.393701); // 1 cm = 0.393701 inches
 
 		private final double conversionFactor;
 
