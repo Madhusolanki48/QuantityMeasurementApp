@@ -24,7 +24,7 @@ public class QuantityLength {
 
     //converts this quantity to base unit i.e. feet
     private double toBaseUnit() {
-        return unit.toFeet(value);
+        return unit.convertToBaseUnit(value);
     }
 
     @Override
@@ -64,10 +64,10 @@ public class QuantityLength {
 		}
 
 		// normalize to base unit feet
-		double valueInFeet = source.toFeet(value);
+		double valueInFeet = source.convertToBaseUnit(value);
 
 		// convert from base unit to target unit
-		return valueInFeet / target.toFeet(1.0);
+		return valueInFeet / target.convertFromBaseUnit(1.0);
 	}
 
 	// instance method to convert this quantity to target unit
@@ -90,14 +90,14 @@ public class QuantityLength {
 		}
 
 		// convert both to base unit feet
-		double thisInFeet = this.unit.toFeet(this.value);
-		double otherInFeet = other.unit.toFeet(other.value);
+		double thisInFeet = this.unit.convertToBaseUnit(this.value);
+		double otherInFeet = other.unit.convertToBaseUnit(other.value);
 
 		// add in base unit
 		double sumInFeet = thisInFeet + otherInFeet;
 
 		// convert back to unit of first operand
-		double resultValue = sumInFeet / this.unit.toFeet(1.0);
+		double resultValue = sumInFeet / this.unit.convertFromBaseUnit(1.0);
 
 		return new QuantityLength(resultValue, this.unit);
 	}
@@ -127,14 +127,14 @@ public class QuantityLength {
 		}
 
 		// convert both to base unit feet
-		double thisInFeet = this.unit.toFeet(this.value);
-		double otherInFeet = other.unit.toFeet(other.value);
+		double thisInFeet = this.unit.convertToBaseUnit(this.value);
+		double otherInFeet = other.unit.convertToBaseUnit(other.value);
 
 		// add in base unit
 		double sumInFeet = thisInFeet + otherInFeet;
 
 		// convert to explicit target unit
-		double resultValue = sumInFeet / targetUnit.toFeet(1.0);
+		double resultValue = sumInFeet / targetUnit.convertFromBaseUnit(1.0);
 
 		return new QuantityLength(resultValue, targetUnit);
 	}

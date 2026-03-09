@@ -15,8 +15,18 @@ public enum LengthUnit {
         this.toFeetFactor = toFeetFactor;
     }
 
-    //method to convert given value to feet
-    public double toFeet(double value) {
-        return value * toFeetFactor;
-    }
+	// UC-8 : convert value in this unit to base unit
+	public double convertToBaseUnit(double value) {
+		return value * toFeetFactor;
+	}
+
+	//convert value from base unit to this unit
+	public double convertFromBaseUnit(double baseValue) {
+		return baseValue / toFeetFactor;
+	}
+
+	//getter method for conversion factor
+	public double getConversionFactor() {
+		return toFeetFactor;
+	}
 }
