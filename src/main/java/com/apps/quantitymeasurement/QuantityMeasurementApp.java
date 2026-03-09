@@ -24,5 +24,17 @@ public class QuantityMeasurementApp {
         System.out.println("1 foot in inches = " + inches);
         System.out.println("1 yard in feet = " + yard.convertTo(LengthUnit.FEET));
         System.out.println("Explicit target (yards): " + r.getValue());
+        
+		//UC-9 : Weight measurement
+		QuantityWeight w1 = new QuantityWeight(1.0, WeightUnit.KILOGRAM);
+		QuantityWeight w2 = new QuantityWeight(1000.0, WeightUnit.GRAM);
+
+		System.out.println("Weight equality: " + w1.equals(w2));
+
+		QuantityWeight converted = w1.convertTo(WeightUnit.GRAM);
+		System.out.println("1 kg in grams = " + converted.getValue());
+
+		QuantityWeight sum = w1.add(w2);
+		System.out.println("Weight addition result = " + sum.getValue() + " " + sum.getUnit());
     }
 }
