@@ -3,130 +3,86 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class QuantityMeasurementAppTest {
-	// UC-8 : Refactored Unit Conversion & Validation Tests
+	// UC-10 : Generic Quantity with IMeasurable Interface
 
-	// verifies LengthUnit.FEET constant and conversion factor
+	// verifies LengthUnit implements IMeasurable
 	@Test
-	void testLengthUnitEnum_FeetConstant() {
-		assertEquals(1.0, LengthUnit.FEET.getConversionFactor(), 1e-6);
+	void testIMeasurableInterface_LengthUnitImplementation() {
+		assertTrue(LengthUnit.FEET instanceof IMeasurable);
 	}
 
-	// verifies LengthUnit.INCH constant and conversion factor
+	// verifies WeightUnit implements IMeasurable
 	@Test
-	void testLengthUnitEnum_InchesConstant() {
-		assertEquals(1.0 / 12.0, LengthUnit.INCH.getConversionFactor(), 1e-6);
+	void testIMeasurableInterface_WeightUnitImplementation() {
+		assertTrue(WeightUnit.KILOGRAM instanceof IMeasurable);
 	}
 
-	// verifies LengthUnit.YARDS constant and conversion factor
+	// verifies equality for length quantities
 	@Test
-	void testLengthUnitEnum_YardsConstant() {
-		assertEquals(3.0, LengthUnit.YARDS.getConversionFactor(), 1e-6);
-	}
-
-	// verifies LengthUnit.CENTIMETERS constant and conversion factor
-	@Test
-	void testLengthUnitEnum_CentimetersConstant() {
-		assertEquals(0.0328084, LengthUnit.CENTIMETERS.getConversionFactor(), 1e-6);
-	}
-
-	// verifies conversion to base unit when already in base unit
-	@Test
-	void testConvertToBaseUnit_FeetToFeet() {
-		assertEquals(5.0, LengthUnit.FEET.convertToBaseUnit(5.0), 1e-6);
-	}
-
-	// verifies conversion from inches to feet
-	@Test
-	void testConvertToBaseUnit_InchesToFeet() {
-		assertEquals(1.0, LengthUnit.INCH.convertToBaseUnit(12.0), 1e-6);
-	}
-
-	// verifies conversion from yards to feet
-	@Test
-	void testConvertToBaseUnit_YardsToFeet() {
-		assertEquals(3.0, LengthUnit.YARDS.convertToBaseUnit(1.0), 1e-6);
-	}
-
-	// verifies conversion from centimeters to feet
-	@Test
-	void testConvertToBaseUnit_CentimetersToFeet() {
-		assertEquals(1.0, LengthUnit.CENTIMETERS.convertToBaseUnit(30.48), 1e-2);
-	}
-
-	// verifies conversion from base unit feet to feet
-	@Test
-	void testConvertFromBaseUnit_FeetToFeet() {
-		assertEquals(2.0, LengthUnit.FEET.convertFromBaseUnit(2.0), 1e-6);
-	}
-
-	// verifies conversion from feet to inches
-	@Test
-	void testConvertFromBaseUnit_FeetToInches() {
-		assertEquals(12.0, LengthUnit.INCH.convertFromBaseUnit(1.0), 1e-6);
-	}
-
-	// verifies conversion from feet to yards
-	@Test
-	void testConvertFromBaseUnit_FeetToYards() {
-		assertEquals(1.0, LengthUnit.YARDS.convertFromBaseUnit(3.0), 1e-6);
-	}
-
-	// verifies conversion from feet to centimeters
-	@Test
-	void testConvertFromBaseUnit_FeetToCentimeters() {
-		assertEquals(30.48, LengthUnit.CENTIMETERS.convertFromBaseUnit(1.0), 1e-2);
-	}
-
-	// verifies equality after refactored unit conversion
-	@Test
-	void testQuantityLengthRefactored_Equality() {
-		QuantityLength q1 = new QuantityLength(1.0, LengthUnit.FEET);
-		QuantityLength q2 = new QuantityLength(12.0, LengthUnit.INCH);
+	void testGenericQuantity_LengthOperations_Equality() {
+		Quantity<LengthUnit> q1 = new Quantity<>(1.0, LengthUnit.FEET);
+		Quantity<LengthUnit> q2 = new Quantity<>(12.0, LengthUnit.INCH);
 
 		assertTrue(q1.equals(q2));
 	}
 
-	// verifies convertTo() method using unit conversion
+	// verifies equality for weight quantities
 	@Test
-	void testQuantityLengthRefactored_ConvertTo() {
-		QuantityLength q = new QuantityLength(1.0, LengthUnit.FEET);
+	void testGenericQuantity_WeightOperations_Equality() {
+		Quantity<WeightUnit> w1 = new Quantity<>(1.0, WeightUnit.KILOGRAM);
+		Quantity<WeightUnit> w2 = new Quantity<>(1000.0, WeightUnit.GRAM);
 
-		double result = q.convertTo(LengthUnit.INCH);
-
-		assertEquals(12.0, result, 1e-6);
+		assertTrue(w1.equals(w2));
 	}
 
-	// verifies add() using unit conversion
+	// verifies conversion for length
 	@Test
-	void testQuantityLengthRefactored_Add() {
-		QuantityLength q1 = new QuantityLength(1.0, LengthUnit.FEET);
-		QuantityLength q2 = new QuantityLength(12.0, LengthUnit.INCH);
+	void testGenericQuantity_LengthOperations_Conversion() {
+		Quantity<LengthUnit> q = new Quantity<>(1.0, LengthUnit.FEET);
 
-		QuantityLength result = q1.add(q2, LengthUnit.FEET);
+		Quantity<LengthUnit> result = q.convertTo(LengthUnit.INCH);
+
+		assertEquals(12.0, result.getValue(), 1e-6);
+	}
+
+	// verifies conversion for weight
+	@Test
+	void testGenericQuantity_WeightOperations_Conversion() {
+		Quantity<WeightUnit> q = new Quantity<>(1.0, WeightUnit.KILOGRAM);
+
+		Quantity<WeightUnit> result = q.convertTo(WeightUnit.GRAM);
+
+		assertEquals(1000.0, result.getValue(), 1e-6);
+	}
+
+	// verifies addition for length
+	@Test
+	void testGenericQuantity_LengthOperations_Addition() {
+		Quantity<LengthUnit> q1 = new Quantity<>(1.0, LengthUnit.FEET);
+		Quantity<LengthUnit> q2 = new Quantity<>(12.0, LengthUnit.INCH);
+
+		Quantity<LengthUnit> result = q1.add(q2, LengthUnit.FEET);
 
 		assertEquals(2.0, result.getValue(), 1e-6);
 	}
 
-	// verifies add() with explicit target unit
+	// verifies addition for weight
 	@Test
-	void testQuantityLengthRefactored_AddWithTargetUnit() {
-		QuantityLength q1 = new QuantityLength(1.0, LengthUnit.FEET);
-		QuantityLength q2 = new QuantityLength(12.0, LengthUnit.INCH);
+	void testGenericQuantity_WeightOperations_Addition() {
+		Quantity<WeightUnit> w1 = new Quantity<>(1.0, WeightUnit.KILOGRAM);
+		Quantity<WeightUnit> w2 = new Quantity<>(1000.0, WeightUnit.GRAM);
 
-		QuantityLength result = q1.add(q2, LengthUnit.YARDS);
+		Quantity<WeightUnit> result = w1.add(w2, WeightUnit.KILOGRAM);
 
-		assertEquals(0.667, result.getValue(), 1e-2);
+		assertEquals(2.0, result.getValue(), 1e-6);
 	}
 
-	// verifies null unit validation
+	// verifies cross-category comparison prevention
 	@Test
-	void testQuantityLengthRefactored_NullUnit() {
-		assertThrows(IllegalArgumentException.class, () -> new QuantityLength(1.0, null));
-	}
+	void testCrossCategoryPrevention_LengthVsWeight() {
+		Quantity<LengthUnit> length = new Quantity<>(1.0, LengthUnit.FEET);
+		Quantity<WeightUnit> weight = new Quantity<>(1.0, WeightUnit.KILOGRAM);
 
-	// verifies invalid value validation
-	@Test
-	void testQuantityLengthRefactored_InvalidValue() {
-		assertThrows(IllegalArgumentException.class, () -> new QuantityLength(Double.NaN, LengthUnit.FEET));
+		assertFalse(length.equals(weight));
 	}
 }
