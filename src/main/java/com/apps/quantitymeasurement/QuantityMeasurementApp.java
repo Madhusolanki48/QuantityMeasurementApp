@@ -63,5 +63,24 @@ public class QuantityMeasurementApp {
         //UC-12 : Division 
         double divisionResult = s1.divide(new Quantity<>(2.0, LengthUnit.FEET));
         System.out.println("Division result = " + divisionResult);
+        
+		// UC-14 : Temperature measurement
+
+		Quantity<TemperatureUnit> t1 = new Quantity<>(0.0, TemperatureUnit.CELSIUS);
+
+		Quantity<TemperatureUnit> t2 = new Quantity<>(32.0, TemperatureUnit.FAHRENHEIT);
+
+		System.out.println("Temperature equality: " + t1.equals(t2));
+
+		Quantity<TemperatureUnit> convertedTemp = t1.convertTo(TemperatureUnit.FAHRENHEIT);
+
+		System.out.println("0C in Fahrenheit = " + convertedTemp);
+
+		// demonstrate unsupported arithmetic
+		try {
+			t1.add(t2);
+		} catch (UnsupportedOperationException e) {
+			System.out.println("Temperature arithmetic error: " + e.getMessage());
+		}
 	}
 }

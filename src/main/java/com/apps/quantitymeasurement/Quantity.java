@@ -102,12 +102,12 @@ public class Quantity<U extends IMeasurable> {
     }
 
     public Quantity<U> add(Quantity<U> other) {
-
+    	unit.validateOperationSupport("addition");
     	validateArithmeticOperands(other, null, false);
 
-    	double sum = performBaseArithmetic(other, ArithmeticOperation.ADD);
+        double sum = performBaseArithmetic(other, ArithmeticOperation.ADD);
 
-    	double result = unit.convertFromBaseUnit(sum);
+        double result = unit.convertFromBaseUnit(sum);
 
     	return new Quantity<>(result, unit);
     }
@@ -129,6 +129,7 @@ public class Quantity<U extends IMeasurable> {
     // UC-12 : Subtraction of Two Quantities
     // subtract another quantity and return result in this unit
     public Quantity<U> subtract(Quantity<U> other) {
+    	unit.validateOperationSupport("subtraction");
     	validateArithmeticOperands(other, null, false);
     	double resultBase = performBaseArithmetic(other, ArithmeticOperation.SUBTRACT);
 
@@ -142,6 +143,7 @@ public class Quantity<U extends IMeasurable> {
 
     // subtract with explicit target unit
     public Quantity<U> subtract(Quantity<U> other, U targetUnit) {
+    	unit.validateOperationSupport("subtraction");
     	validateArithmeticOperands(other, targetUnit, true);
 
     	double resultBase = performBaseArithmetic(other, ArithmeticOperation.SUBTRACT);
@@ -155,6 +157,7 @@ public class Quantity<U extends IMeasurable> {
 
 	// UC-12 : Division operation
 	public double divide(Quantity<U> other) {
+		unit.validateOperationSupport("division");
 		validateArithmeticOperands(other, null, false);
 
 		return performBaseArithmetic(other, ArithmeticOperation.DIVIDE);
