@@ -114,4 +114,63 @@ public class QuantityMeasurementAppTest {
 
 	    assertEquals(2.0, result.getValue(), 1e-6);
 	}
+	// UC-12 : Subtraction Tests
+	@Test
+	void testSubtraction_SameUnit_FeetMinusFeet() {
+		Quantity<LengthUnit> q1 = new Quantity<>(10.0, LengthUnit.FEET);
+		Quantity<LengthUnit> q2 = new Quantity<>(5.0, LengthUnit.FEET);
+
+		Quantity<LengthUnit> result = q1.subtract(q2);
+
+		assertEquals(5.0, result.getValue(), 1e-6);
+	}
+
+	@Test
+	void testSubtraction_CrossUnit_FeetMinusInches() {
+		Quantity<LengthUnit> q1 = new Quantity<>(10.0, LengthUnit.FEET);
+		Quantity<LengthUnit> q2 = new Quantity<>(6.0, LengthUnit.INCH);
+
+		Quantity<LengthUnit> result = q1.subtract(q2);
+
+		assertEquals(9.5, result.getValue(), 1e-6);
+	}
+
+	@Test
+	void testSubtraction_ResultingInNegative() {
+		Quantity<LengthUnit> q1 = new Quantity<>(5.0, LengthUnit.FEET);
+		Quantity<LengthUnit> q2 = new Quantity<>(10.0, LengthUnit.FEET);
+
+		Quantity<LengthUnit> result = q1.subtract(q2);
+
+		assertEquals(-5.0, result.getValue(), 1e-6);
+	}
+
+	// UC-12 : Division Tests
+	@Test
+	void testDivision_SameUnit_FeetDividedByFeet() {
+		Quantity<LengthUnit> q1 = new Quantity<>(10.0, LengthUnit.FEET);
+		Quantity<LengthUnit> q2 = new Quantity<>(2.0, LengthUnit.FEET);
+
+		double result = q1.divide(q2);
+
+		assertEquals(5.0, result, 1e-6);
+	}
+
+	@Test
+	void testDivision_RatioEqualToOne() {
+		Quantity<LengthUnit> q1 = new Quantity<>(10.0, LengthUnit.FEET);
+		Quantity<LengthUnit> q2 = new Quantity<>(10.0, LengthUnit.FEET);
+
+		double result = q1.divide(q2);
+
+		assertEquals(1.0, result, 1e-6);
+	}
+
+	@Test
+	void testDivision_ByZero() {
+		Quantity<LengthUnit> q1 = new Quantity<>(10.0, LengthUnit.FEET);
+		Quantity<LengthUnit> q2 = new Quantity<>(0.0, LengthUnit.FEET);
+
+		assertThrows(ArithmeticException.class, () -> q1.divide(q2));
+	}
 }

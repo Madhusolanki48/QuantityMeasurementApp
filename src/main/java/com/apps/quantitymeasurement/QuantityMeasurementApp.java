@@ -49,5 +49,19 @@ public class QuantityMeasurementApp {
 
 		Quantity<VolumeUnit> volumeSum = v1.add(v2);
 		System.out.println("Volume addition result = " + volumeSum.getValue() + " " + volumeSum.getUnit());
+		
+        //UC-12 : Subtraction 
+        Quantity<LengthUnit> s1 = new Quantity<>(10.0, LengthUnit.FEET);
+        Quantity<LengthUnit> s2 = new Quantity<>(6.0, LengthUnit.INCH);
+
+        Quantity<LengthUnit> subtractionResult = s1.subtract(s2);
+        System.out.println("Subtraction result = " + subtractionResult);
+
+        Quantity<LengthUnit> subtractionTarget = s1.subtract(s2, LengthUnit.INCH);
+        System.out.println("Subtraction with target unit = " + subtractionTarget);
+
+        //UC-12 : Division 
+        double divisionResult = s1.divide(new Quantity<>(2.0, LengthUnit.FEET));
+        System.out.println("Division result = " + divisionResult);
 	}
 }

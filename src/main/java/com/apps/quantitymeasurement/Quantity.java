@@ -77,4 +77,61 @@ public class Quantity<U extends IMeasurable> {
     public String toString() {
         return "Quantity(" + value + ", " + unit.getUnitName() + ")";
     }
+    // UC-12 : Subtraction of Two Quantities
+    // subtract another quantity and return result in this unit
+    public Quantity<U> subtract(Quantity<U> other) {
+
+        if (other == null)
+            throw new IllegalArgumentException("Other quantity cannot be null");
+
+        if (unit.getClass() != other.unit.getClass())
+            throw new IllegalArgumentException("Cross-category subtraction not allowed");
+
+        double resultBase = this.toBaseUnit() - other.toBaseUnit();
+
+        double result = unit.convertFromBaseUnit(resultBase);
+
+        // round to two decimal places
+        result = Math.round(result * 100.0) / 100.0;
+
+        return new Quantity<>(result, unit);
+    }
+
+    // subtract with explicit target unit
+    public Quantity<U> subtract(Quantity<U> other, U targetUnit) {
+
+        if (other == null)
+            throw new IllegalArgumentException("Other quantity cannot be null");
+
+        if (targetUnit == null)
+            throw new IllegalArgumentException("Target unit cannot be null");
+
+        if (unit.getClass() != other.unit.getClass())
+            throw new IllegalArgumentException("Cross-category subtraction not allowed");
+
+        double resultBase = this.toBaseUnit() - other.toBaseUnit();
+
+        double result = targetUnit.convertFromBaseUnit(resultBase);
+
+        result = Math.round(result * 100.0) / 100.0;
+
+        return new Quantity<>(result, targetUnit);
+    }
+
+	// UC-12 : Division operation
+	public double divide(Quantity<U> other) {
+
+		if (other == null)
+			throw new IllegalArgumentException("Other quantity cannot be null");
+
+		if (unit.getClass() != other.unit.getClass())
+			throw new IllegalArgumentException("Cross-category division not allowed");
+
+		double divisor = other.toBaseUnit();
+
+		if (divisor == 0)
+			throw new ArithmeticException("Division by zero");
+
+		return this.toBaseUnit() / divisor;
+	}
 }
