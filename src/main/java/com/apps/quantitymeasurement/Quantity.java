@@ -30,6 +30,49 @@ public class Quantity<U extends IMeasurable> {
         return unit.convertToBaseUnit(value);
     }
 
+	// UC-13 : Arithmetic operation enum
+	private enum ArithmeticOperation {
+		ADD, SUBTRACT, DIVIDE
+	}
+	// UC-13 : centralized validation helper
+	private void validateArithmeticOperands(Quantity<U> other, U targetUnit, boolean checkTargetUnit) {
+
+		if (other == null)
+			throw new IllegalArgumentException("Other quantity cannot be null");
+
+		if (unit.getClass() != other.unit.getClass())
+			throw new IllegalArgumentException("Cross-category operation not allowed");
+
+		if (!Double.isFinite(this.value) || !Double.isFinite(other.value))
+			throw new IllegalArgumentException("Invalid numeric value");
+
+		if (checkTargetUnit && targetUnit == null)
+			throw new IllegalArgumentException("Target unit cannot be null");
+	}
+	// UC-13 : core arithmetic helper
+	private double performBaseArithmetic(Quantity<U> other, ArithmeticOperation operation) {
+
+		double base1 = this.toBaseUnit();
+		double base2 = other.toBaseUnit();
+
+		switch (operation) {
+
+		case ADD:
+			return base1 + base2;
+
+		case SUBTRACT:
+			return base1 - base2;
+
+		case DIVIDE:
+			if (base2 == 0)
+				throw new ArithmeticException("Division by zero");
+			return base1 / base2;
+
+		default:
+			throw new IllegalArgumentException("Unsupported operation");
+		}
+	}
+
     @Override
     public boolean equals(Object obj) {
 
@@ -60,18 +103,24 @@ public class Quantity<U extends IMeasurable> {
 
     public Quantity<U> add(Quantity<U> other) {
 
-        double sum = this.toBaseUnit() + other.toBaseUnit();
-        double result = unit.convertFromBaseUnit(sum);
+    	validateArithmeticOperands(other, null, false);
 
-        return new Quantity<>(result, unit);
+    	double sum = performBaseArithmetic(other, ArithmeticOperation.ADD);
+
+    	double result = unit.convertFromBaseUnit(sum);
+
+    	return new Quantity<>(result, unit);
     }
 
     public Quantity<U> add(Quantity<U> other, U targetUnit) {
 
-        double sum = this.toBaseUnit() + other.toBaseUnit();
-        double result = targetUnit.convertFromBaseUnit(sum);
+    	validateArithmeticOperands(other, targetUnit, true);
 
-        return new Quantity<>(result, targetUnit);
+    	double sum = performBaseArithmetic(other, ArithmeticOperation.ADD);
+
+    	double result = targetUnit.convertFromBaseUnit(sum);
+
+    	return new Quantity<>(result, targetUnit);
     }
     @Override
     public String toString() {
@@ -80,14 +129,8 @@ public class Quantity<U extends IMeasurable> {
     // UC-12 : Subtraction of Two Quantities
     // subtract another quantity and return result in this unit
     public Quantity<U> subtract(Quantity<U> other) {
-
-        if (other == null)
-            throw new IllegalArgumentException("Other quantity cannot be null");
-
-        if (unit.getClass() != other.unit.getClass())
-            throw new IllegalArgumentException("Cross-category subtraction not allowed");
-
-        double resultBase = this.toBaseUnit() - other.toBaseUnit();
+    	validateArithmeticOperands(other, null, false);
+    	double resultBase = performBaseArithmetic(other, ArithmeticOperation.SUBTRACT);
 
         double result = unit.convertFromBaseUnit(resultBase);
 
@@ -99,17 +142,9 @@ public class Quantity<U extends IMeasurable> {
 
     // subtract with explicit target unit
     public Quantity<U> subtract(Quantity<U> other, U targetUnit) {
+    	validateArithmeticOperands(other, targetUnit, true);
 
-        if (other == null)
-            throw new IllegalArgumentException("Other quantity cannot be null");
-
-        if (targetUnit == null)
-            throw new IllegalArgumentException("Target unit cannot be null");
-
-        if (unit.getClass() != other.unit.getClass())
-            throw new IllegalArgumentException("Cross-category subtraction not allowed");
-
-        double resultBase = this.toBaseUnit() - other.toBaseUnit();
+    	double resultBase = performBaseArithmetic(other, ArithmeticOperation.SUBTRACT);
 
         double result = targetUnit.convertFromBaseUnit(resultBase);
 
@@ -120,18 +155,8 @@ public class Quantity<U extends IMeasurable> {
 
 	// UC-12 : Division operation
 	public double divide(Quantity<U> other) {
+		validateArithmeticOperands(other, null, false);
 
-		if (other == null)
-			throw new IllegalArgumentException("Other quantity cannot be null");
-
-		if (unit.getClass() != other.unit.getClass())
-			throw new IllegalArgumentException("Cross-category division not allowed");
-
-		double divisor = other.toBaseUnit();
-
-		if (divisor == 0)
-			throw new ArithmeticException("Division by zero");
-
-		return this.toBaseUnit() / divisor;
+		return performBaseArithmetic(other, ArithmeticOperation.DIVIDE);
 	}
 }
