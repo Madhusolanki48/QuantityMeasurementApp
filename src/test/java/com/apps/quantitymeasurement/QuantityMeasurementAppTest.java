@@ -85,4 +85,33 @@ public class QuantityMeasurementAppTest {
 
 		assertFalse(length.equals(weight));
 	}
+	// UC-11 : Volume equality
+	@Test
+	void testEquality_LitreToMillilitre_EquivalentValue() {
+	    Quantity<VolumeUnit> v1 = new Quantity<>(1.0, VolumeUnit.LITRE);
+	    Quantity<VolumeUnit> v2 = new Quantity<>(1000.0, VolumeUnit.MILLILITRE);
+
+	    assertTrue(v1.equals(v2));
+	}
+
+	// volume conversion
+	@Test
+	void testConversion_LitreToMillilitre() {
+	    Quantity<VolumeUnit> v = new Quantity<>(1.0, VolumeUnit.LITRE);
+
+	    Quantity<VolumeUnit> result = v.convertTo(VolumeUnit.MILLILITRE);
+
+	    assertEquals(1000.0, result.getValue(), 1e-6);
+	}
+
+	// volume addition
+	@Test
+	void testAddition_LitrePlusMillilitre() {
+	    Quantity<VolumeUnit> v1 = new Quantity<>(1.0, VolumeUnit.LITRE);
+	    Quantity<VolumeUnit> v2 = new Quantity<>(1000.0, VolumeUnit.MILLILITRE);
+
+	    Quantity<VolumeUnit> result = v1.add(v2);
+
+	    assertEquals(2.0, result.getValue(), 1e-6);
+	}
 }

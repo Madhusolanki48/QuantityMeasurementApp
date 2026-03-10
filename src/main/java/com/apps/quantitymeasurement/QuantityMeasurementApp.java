@@ -36,5 +36,18 @@ public class QuantityMeasurementApp {
 
 		Quantity<WeightUnit> sum = w1.add(w2);
 		System.out.println("Weight addition result = " + sum.getValue() + " " + sum.getUnit());
-    }
+    
+		// UC-11 : Volume measurement
+		Quantity<VolumeUnit> v1 = new Quantity<>(1.0, VolumeUnit.LITRE);
+		Quantity<VolumeUnit> v2 = new Quantity<>(1000.0, VolumeUnit.MILLILITRE);
+		Quantity<VolumeUnit> v3 = new Quantity<>(1.0, VolumeUnit.GALLON);
+
+		System.out.println("Volume equality (1L == 1000mL): " + v1.equals(v2));
+
+		Quantity<VolumeUnit> convertedVolume = v3.convertTo(VolumeUnit.LITRE);
+		System.out.println("1 gallon in litres = " + convertedVolume.getValue());
+
+		Quantity<VolumeUnit> volumeSum = v1.add(v2);
+		System.out.println("Volume addition result = " + volumeSum.getValue() + " " + volumeSum.getUnit());
+	}
 }
