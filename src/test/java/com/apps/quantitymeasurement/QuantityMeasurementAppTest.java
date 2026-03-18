@@ -1,211 +1,98 @@
 package com.apps.quantitymeasurement;
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import org.junit.jupiter.api.BeforeEach;
+
+import com.apps.quantitymeasurement.controller.QuantityMeasurementController;
+import com.apps.quantitymeasurement.dto.QuantityDTO;
+import com.apps.quantitymeasurement.repository.QuantityMeasurementCacheRepository;
+import com.apps.quantitymeasurement.service.IQuantityMeasurementService;
+import com.apps.quantitymeasurement.service.QuantityMeasurementServiceImpl;
 
 public class QuantityMeasurementAppTest {
-	// UC-10 : Generic Quantity with IMeasurable Interface
+	private IQuantityMeasurementService service;
+	private QuantityMeasurementController controller;
 
-	// verifies LengthUnit implements IMeasurable
-	@Test
-	void testIMeasurableInterface_LengthUnitImplementation() {
-		assertTrue(LengthUnit.FEET instanceof IMeasurable);
-	}
+	@BeforeEach
+	void setup() {
 
-	// verifies WeightUnit implements IMeasurable
-	@Test
-	void testIMeasurableInterface_WeightUnitImplementation() {
-		assertTrue(WeightUnit.KILOGRAM instanceof IMeasurable);
-	}
+		QuantityMeasurementCacheRepository repository = QuantityMeasurementCacheRepository.getInstance();
 
-	// verifies equality for length quantities
-	@Test
-	void testGenericQuantity_LengthOperations_Equality() {
-		Quantity<LengthUnit> q1 = new Quantity<>(1.0, LengthUnit.FEET);
-		Quantity<LengthUnit> q2 = new Quantity<>(12.0, LengthUnit.INCH);
+		service = new QuantityMeasurementServiceImpl(repository);
 
-		assertTrue(q1.equals(q2));
-	}
-
-	// verifies equality for weight quantities
-	@Test
-	void testGenericQuantity_WeightOperations_Equality() {
-		Quantity<WeightUnit> w1 = new Quantity<>(1.0, WeightUnit.KILOGRAM);
-		Quantity<WeightUnit> w2 = new Quantity<>(1000.0, WeightUnit.GRAM);
-
-		assertTrue(w1.equals(w2));
-	}
-
-	// verifies conversion for length
-	@Test
-	void testGenericQuantity_LengthOperations_Conversion() {
-		Quantity<LengthUnit> q = new Quantity<>(1.0, LengthUnit.FEET);
-
-		Quantity<LengthUnit> result = q.convertTo(LengthUnit.INCH);
-
-		assertEquals(12.0, result.getValue(), 1e-6);
-	}
-
-	// verifies conversion for weight
-	@Test
-	void testGenericQuantity_WeightOperations_Conversion() {
-		Quantity<WeightUnit> q = new Quantity<>(1.0, WeightUnit.KILOGRAM);
-
-		Quantity<WeightUnit> result = q.convertTo(WeightUnit.GRAM);
-
-		assertEquals(1000.0, result.getValue(), 1e-6);
-	}
-
-	// verifies addition for length
-	@Test
-	void testGenericQuantity_LengthOperations_Addition() {
-		Quantity<LengthUnit> q1 = new Quantity<>(1.0, LengthUnit.FEET);
-		Quantity<LengthUnit> q2 = new Quantity<>(12.0, LengthUnit.INCH);
-
-		Quantity<LengthUnit> result = q1.add(q2, LengthUnit.FEET);
-
-		assertEquals(2.0, result.getValue(), 1e-6);
-	}
-
-	// verifies addition for weight
-	@Test
-	void testGenericQuantity_WeightOperations_Addition() {
-		Quantity<WeightUnit> w1 = new Quantity<>(1.0, WeightUnit.KILOGRAM);
-		Quantity<WeightUnit> w2 = new Quantity<>(1000.0, WeightUnit.GRAM);
-
-		Quantity<WeightUnit> result = w1.add(w2, WeightUnit.KILOGRAM);
-
-		assertEquals(2.0, result.getValue(), 1e-6);
-	}
-
-	// verifies cross-category comparison prevention
-	@Test
-	void testCrossCategoryPrevention_LengthVsWeight() {
-		Quantity<LengthUnit> length = new Quantity<>(1.0, LengthUnit.FEET);
-		Quantity<WeightUnit> weight = new Quantity<>(1.0, WeightUnit.KILOGRAM);
-
-		assertFalse(length.equals(weight));
-	}
-	// UC-11 : Volume equality
-	@Test
-	void testEquality_LitreToMillilitre_EquivalentValue() {
-	    Quantity<VolumeUnit> v1 = new Quantity<>(1.0, VolumeUnit.LITRE);
-	    Quantity<VolumeUnit> v2 = new Quantity<>(1000.0, VolumeUnit.MILLILITRE);
-
-	    assertTrue(v1.equals(v2));
-	}
-
-	// volume conversion
-	@Test
-	void testConversion_LitreToMillilitre() {
-	    Quantity<VolumeUnit> v = new Quantity<>(1.0, VolumeUnit.LITRE);
-
-	    Quantity<VolumeUnit> result = v.convertTo(VolumeUnit.MILLILITRE);
-
-	    assertEquals(1000.0, result.getValue(), 1e-6);
-	}
-
-	// volume addition
-	@Test
-	void testAddition_LitrePlusMillilitre() {
-	    Quantity<VolumeUnit> v1 = new Quantity<>(1.0, VolumeUnit.LITRE);
-	    Quantity<VolumeUnit> v2 = new Quantity<>(1000.0, VolumeUnit.MILLILITRE);
-
-	    Quantity<VolumeUnit> result = v1.add(v2);
-
-	    assertEquals(2.0, result.getValue(), 1e-6);
-	}
-	// UC-12 : Subtraction Tests
-	@Test
-	void testSubtraction_SameUnit_FeetMinusFeet() {
-		Quantity<LengthUnit> q1 = new Quantity<>(10.0, LengthUnit.FEET);
-		Quantity<LengthUnit> q2 = new Quantity<>(5.0, LengthUnit.FEET);
-
-		Quantity<LengthUnit> result = q1.subtract(q2);
-
-		assertEquals(5.0, result.getValue(), 1e-6);
+		controller = new QuantityMeasurementController(service);
 	}
 
 	@Test
-	void testSubtraction_CrossUnit_FeetMinusInches() {
-		Quantity<LengthUnit> q1 = new Quantity<>(10.0, LengthUnit.FEET);
-		Quantity<LengthUnit> q2 = new Quantity<>(6.0, LengthUnit.INCH);
+	void testAddition_Success() {
 
-		Quantity<LengthUnit> result = q1.subtract(q2);
+		QuantityDTO q1 = new QuantityDTO(10, "METER");
+		QuantityDTO q2 = new QuantityDTO(5, "METER");
 
-		assertEquals(9.5, result.getValue(), 1e-6);
+		double result = service.add(q1, q2);
+
+		assertEquals(15, result);
 	}
 
 	@Test
-	void testSubtraction_ResultingInNegative() {
-		Quantity<LengthUnit> q1 = new Quantity<>(5.0, LengthUnit.FEET);
-		Quantity<LengthUnit> q2 = new Quantity<>(10.0, LengthUnit.FEET);
+	void testSubtraction_Success() {
 
-		Quantity<LengthUnit> result = q1.subtract(q2);
+		QuantityDTO q1 = new QuantityDTO(10, "METER");
+		QuantityDTO q2 = new QuantityDTO(5, "METER");
 
-		assertEquals(-5.0, result.getValue(), 1e-6);
-	}
+		double result = service.subtract(q1, q2);
 
-	// UC-12 : Division Tests
-	@Test
-	void testDivision_SameUnit_FeetDividedByFeet() {
-		Quantity<LengthUnit> q1 = new Quantity<>(10.0, LengthUnit.FEET);
-		Quantity<LengthUnit> q2 = new Quantity<>(2.0, LengthUnit.FEET);
-
-		double result = q1.divide(q2);
-
-		assertEquals(5.0, result, 1e-6);
+		assertEquals(5, result);
 	}
 
 	@Test
-	void testDivision_RatioEqualToOne() {
-		Quantity<LengthUnit> q1 = new Quantity<>(10.0, LengthUnit.FEET);
-		Quantity<LengthUnit> q2 = new Quantity<>(10.0, LengthUnit.FEET);
+	void testDivision_Success() {
 
-		double result = q1.divide(q2);
+		QuantityDTO q1 = new QuantityDTO(10, "METER");
+		QuantityDTO q2 = new QuantityDTO(5, "METER");
 
-		assertEquals(1.0, result, 1e-6);
+		double result = service.divide(q1, q2);
+
+		assertEquals(2, result);
 	}
 
 	@Test
 	void testDivision_ByZero() {
-		Quantity<LengthUnit> q1 = new Quantity<>(10.0, LengthUnit.FEET);
-		Quantity<LengthUnit> q2 = new Quantity<>(0.0, LengthUnit.FEET);
 
-		assertThrows(ArithmeticException.class, () -> q1.divide(q2));
+		QuantityDTO q1 = new QuantityDTO(10, "METER");
+		QuantityDTO q2 = new QuantityDTO(0, "METER");
+
+		assertThrows(ArithmeticException.class, () -> {
+			service.divide(q1, q2);
+		});
 	}
-	//UC-14
+
 	@Test
-	void testTemperatureEquality_CelsiusToFahrenheit() {
+	void testController_PerformAddition() {
 
-	    Quantity<TemperatureUnit> t1 =
-	            new Quantity<>(0.0, TemperatureUnit.CELSIUS);
+		QuantityDTO q1 = new QuantityDTO(20, "METER");
+		QuantityDTO q2 = new QuantityDTO(10, "METER");
 
-	    Quantity<TemperatureUnit> t2 =
-	            new Quantity<>(32.0, TemperatureUnit.FAHRENHEIT);
-
-	    assertTrue(t1.equals(t2));
+		assertDoesNotThrow(() -> controller.performAddition(q1, q2));
 	}
+
 	@Test
-	void testTemperatureConversion_CelsiusToFahrenheit() {
+	void testController_PerformSubtraction() {
 
-	    Quantity<TemperatureUnit> t =
-	            new Quantity<>(100.0, TemperatureUnit.CELSIUS);
+		QuantityDTO q1 = new QuantityDTO(20, "METER");
+		QuantityDTO q2 = new QuantityDTO(10, "METER");
 
-	    Quantity<TemperatureUnit> result =
-	            t.convertTo(TemperatureUnit.FAHRENHEIT);
-
-	    assertEquals(212.0, result.getValue(), 0.001);
+		assertDoesNotThrow(() -> controller.performSubtraction(q1, q2));
 	}
+
 	@Test
-	void testTemperatureUnsupportedOperation_Add() {
+	void testController_PerformDivision() {
 
-	    Quantity<TemperatureUnit> t1 =
-	            new Quantity<>(100.0, TemperatureUnit.CELSIUS);
+		QuantityDTO q1 = new QuantityDTO(20, "METER");
+		QuantityDTO q2 = new QuantityDTO(10, "METER");
 
-	    Quantity<TemperatureUnit> t2 =
-	            new Quantity<>(50.0, TemperatureUnit.CELSIUS);
-
-	    assertThrows(UnsupportedOperationException.class,
-	            () -> t1.add(t2));
+		assertDoesNotThrow(() -> controller.performDivision(q1, q2));
 	}
 }
