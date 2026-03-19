@@ -5,8 +5,7 @@ public class QuantityConverter {
 
 	public static double convert(double value, LengthUnit from, LengthUnit to) {
 
-		double base = from.toBase(value);
-
-		return base / to.toBase(1);
+		double base = from.convertToBaseUnit(value);
+		return base / to.convertToBaseUnit(1);
 	}
 }
