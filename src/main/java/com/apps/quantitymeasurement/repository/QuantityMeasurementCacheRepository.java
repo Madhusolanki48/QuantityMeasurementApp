@@ -2,7 +2,7 @@ package com.apps.quantitymeasurement.repository;
 import java.util.*;
 import com.apps.quantitymeasurement.entity.Quantity;
 
-public class QuantityMeasurementCacheRepository implements IQuantityMeasurementRepository {
+public class QuantityMeasurementCacheRepository {
 	private final Set<Quantity<?>> history = new HashSet<>();
 
 	public void save(Quantity<?> quantity) {
