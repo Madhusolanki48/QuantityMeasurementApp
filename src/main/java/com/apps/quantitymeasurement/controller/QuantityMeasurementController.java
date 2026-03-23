@@ -2,18 +2,16 @@ package com.apps.quantitymeasurement.controller;
 
 import java.util.*;
 import com.apps.quantitymeasurement.entity.Quantity;
-import com.apps.quantitymeasurement.exception.QuantityMeasurementException;
-import com.apps.quantitymeasurement.repository.QuantityMeasurementCacheRepository;
+import com.apps.quantitymeasurement.repository.IQuantityMeasurementRepository;
 import com.apps.quantitymeasurement.service.IQuantityMeasurementService;
 import com.apps.quantitymeasurement.units.IMeasurable;
-import com.apps.quantitymeasurement.service.IQuantityMeasurementService;
 
 public class QuantityMeasurementController {
 	private final IQuantityMeasurementService service;
-	private final QuantityMeasurementCacheRepository repository;
+	private final IQuantityMeasurementRepository  repository;
 
 	public QuantityMeasurementController(IQuantityMeasurementService service,
-			QuantityMeasurementCacheRepository repository) {
+			IQuantityMeasurementRepository  repository) {
 		this.service = service;
 		this.repository = repository;
 	}
@@ -48,7 +46,7 @@ public class QuantityMeasurementController {
 		return service.divide(q1, q2);
 	}
 
-	public Set<Quantity<?>> getHistory() {
-		return repository.findAll();
+	public java.util.List<String> getHistory() {
+	    return repository.findAllHistory();
 	}
 }

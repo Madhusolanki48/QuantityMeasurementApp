@@ -2,20 +2,21 @@ package com.apps.quantitymeasurement.app;
 
 import com.apps.quantitymeasurement.controller.QuantityMeasurementController;
 import com.apps.quantitymeasurement.entity.Quantity;
-import com.apps.quantitymeasurement.repository.QuantityMeasurementCacheRepository;
 import com.apps.quantitymeasurement.service.IQuantityMeasurementService;
 import com.apps.quantitymeasurement.service.QuantityMeasurementServiceImpl;
 import com.apps.quantitymeasurement.units.LengthUnit;
 import com.apps.quantitymeasurement.units.TemperatureUnit;
 import com.apps.quantitymeasurement.units.VolumeUnit;
 import com.apps.quantitymeasurement.units.WeightUnit;
+import com.apps.quantitymeasurement.repository.IQuantityMeasurementRepository;
+import com.apps.quantitymeasurement.repository.QuantityMeasurementDatabaseRepository;
 
 public class QuantityMeasurementApp {
 	// main method
 	public static void main(String[] args) {
 		System.out.println("-------- Welcome to Quantity Measurement App ------- ");
 		System.out.println("----------------------------------------------------");
-		QuantityMeasurementCacheRepository repository = new QuantityMeasurementCacheRepository();
+		IQuantityMeasurementRepository repository = new QuantityMeasurementDatabaseRepository();
 		IQuantityMeasurementService service = new QuantityMeasurementServiceImpl(repository);
 		QuantityMeasurementController controller = new QuantityMeasurementController(service, repository);
 
@@ -31,9 +32,15 @@ public class QuantityMeasurementApp {
 				controller.checkEquality(feet, inches) ? "TRUE" : "FALSE");
 		System.out.printf("Conversion   : %s -> %s%n", feet, controller.convert(feet, LengthUnit.INCH));
 
-		System.out.printf("Addition     : %s + %s -> %s%n", feet, inches, controller.add(feet, inches, LengthUnit.FEET));
+		System.out.printf("Add (New)    : %s + %s -> %s%n", feet, inches,
+				controller.add(feet, inches, LengthUnit.FEET));
 
-		System.out.printf("Subtraction  : %s - %s -> %s%n", feet, inches,
+		System.out.printf("Add (duplicate): %s + %s -> %s%n", feet, inches,
+				controller.add(feet, inches, LengthUnit.FEET));
+
+		System.out.printf("Subtract (New)  : %s - %s -> %s%n", feet, inches,
+				controller.subtract(feet, inches, LengthUnit.FEET));
+		System.out.printf("Subtract (duplicate): %s - %s -> %s%n", feet, inches,
 				controller.subtract(feet, inches, LengthUnit.FEET));
 
 		System.out.printf("Division     : %s / %s -> %.1f%n", feet, inches, controller.divide(feet, inches));
@@ -51,9 +58,12 @@ public class QuantityMeasurementApp {
 
 		System.out.printf("Conversion   : %s -> %s%n", kg, controller.convert(kg, WeightUnit.GRAM));
 
-		System.out.printf("Addition     : %s + %s -> %s%n", kg, gram, controller.add(kg, gram, WeightUnit.KILOGRAM));
+		System.out.printf("Add (New)    : %s + %s -> %s%n", kg, gram, controller.add(kg, gram, WeightUnit.KILOGRAM));
+		System.out.printf("Add (duplicate): %s + %s -> %s%n", kg, gram, controller.add(kg, gram, WeightUnit.KILOGRAM));
 
-		System.out.printf("Subtraction  : %s - %s -> %s%n", kg, gram,
+		System.out.printf("Subtract (New) : %s - %s -> %s%n", kg, gram,
+				controller.subtract(kg, gram, WeightUnit.KILOGRAM));
+		System.out.printf("Subtract (duplicate): %s - %s -> %s%n", kg, gram,
 				controller.subtract(kg, gram, WeightUnit.KILOGRAM));
 
 		System.out.printf("Division     : %s / %s -> %.1f%n", kg, gram, controller.divide(kg, gram));
@@ -72,9 +82,14 @@ public class QuantityMeasurementApp {
 
 		System.out.printf("Conversion   : %s -> %s%n", litre, controller.convert(litre, VolumeUnit.MILLILITRE));
 
-		System.out.printf("Addition     : %s + %s -> %s%n", litre, ml, controller.add(litre, ml, VolumeUnit.LITRE));
+		System.out.printf("Add (New)     : %s + %s -> %s%n", litre, ml, controller.add(litre, ml, VolumeUnit.LITRE));
 
-		System.out.printf("Subtraction  : %s - %s -> %s%n", litre, ml, controller.subtract(litre, ml, VolumeUnit.LITRE));
+		System.out.printf("Add (duplicate): %s + %s -> %s%n", litre, ml, controller.add(litre, ml, VolumeUnit.LITRE));
+
+		System.out.printf("Subtract (New)  : %s - %s -> %s%n", litre, ml,
+				controller.subtract(litre, ml, VolumeUnit.LITRE));
+		System.out.printf("Subtract (duplicate): %s - %s -> %s%n", litre, ml,
+				controller.subtract(litre, ml, VolumeUnit.LITRE));
 
 		System.out.printf("Division     : %s / %s -> %.1f%n", litre, ml, controller.divide(litre, ml));
 
@@ -94,15 +109,16 @@ public class QuantityMeasurementApp {
 		try {
 			controller.add(c, f);
 		} catch (Exception e) {
-			System.out.println("Addition     :  Not Allowed (Temperature rule)");
+			System.out.printf("Add (invalid) : %s + %s -> Not Allowed%n", c, f);
 		}
 
 		System.out.println("\n[HISTORY]");
 		System.out.println("------------------------------------------------------");
 
 		int i = 1;
-		for (Quantity<?> q : controller.getHistory()) {
-			System.out.println(i++ + ". " + q);
+		for (String h : controller.getHistory()) {
+			System.out.println(i++ + ". " + h);
 		}
+
 	}
 }
