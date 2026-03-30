@@ -1,5 +1,7 @@
 package com.apps.quantitymeasurement.utils;
+
 import com.apps.quantitymeasurement.dto.QuantityDTO;
+
 import com.apps.quantitymeasurement.entity.Quantity;
 import com.apps.quantitymeasurement.units.*;
 
@@ -9,56 +11,40 @@ public class QuantityConverter {
 
 		String unit = dto.getUnit();
 
-		if (isLength(unit)) {
-			return new Quantity<>(dto.getValue(), LengthUnit.valueOf(unit));
-		} else if (isWeight(unit)) {
-			return new Quantity<>(dto.getValue(), WeightUnit.valueOf(unit));
-		} else if (isVolume(unit)) {
-			return new Quantity<>(dto.getValue(), VolumeUnit.valueOf(unit));
-		} else if (isTemperature(unit)) {
-			return new Quantity<>(dto.getValue(), TemperatureUnit.valueOf(unit));
+		try {
+			// LENGTH
+			if (dto.getMeasurementType().equalsIgnoreCase("LengthUnit")) {
+				return new Quantity<>(dto.getValue(), LengthUnit.valueOf(unit));
+			}
+
+			// WEIGHT
+			if (dto.getMeasurementType().equalsIgnoreCase("WeightUnit")) {
+				return new Quantity<>(dto.getValue(), WeightUnit.valueOf(unit));
+			}
+
+			// VOLUME
+			if (dto.getMeasurementType().equalsIgnoreCase("VolumeUnit")) {
+				return new Quantity<>(dto.getValue(), VolumeUnit.valueOf(unit));
+			}
+
+			// TEMPERATURE
+			if (dto.getMeasurementType().equalsIgnoreCase("TemperatureUnit")) {
+				return new Quantity<>(dto.getValue(), TemperatureUnit.valueOf(unit));
+			}
+
+		} catch (Exception e) {
+			throw new IllegalArgumentException("Invalid unit or measurement type");
 		}
 
-		throw new IllegalArgumentException("Unsupported unit: " + unit);
+		throw new IllegalArgumentException("Unsupported measurement type");
 	}
 
+	// OPTIONAL (if needed)
 	public static QuantityDTO toDTO(Quantity<?> q) {
-		return new QuantityDTO(q.getValue(), q.getUnit().getUnitName());
-	}
-
-	private static boolean isLength(String u) {
-		try {
-			LengthUnit.valueOf(u);
-			return true;
-		} catch (Exception e) {
-			return false;
-		}
-	}
-
-	private static boolean isWeight(String u) {
-		try {
-			WeightUnit.valueOf(u);
-			return true;
-		} catch (Exception e) {
-			return false;
-		}
-	}
-
-	private static boolean isVolume(String u) {
-		try {
-			VolumeUnit.valueOf(u);
-			return true;
-		} catch (Exception e) {
-			return false;
-		}
-	}
-
-	private static boolean isTemperature(String u) {
-		try {
-			TemperatureUnit.valueOf(u);
-			return true;
-		} catch (Exception e) {
-			return false;
-		}
+		QuantityDTO dto = new QuantityDTO();
+		dto.setValue(q.getValue());
+		dto.setUnit(q.getUnit().getUnitName());
+		dto.setMeasurementType(q.getUnit().getClass().getSimpleName());
+		return dto;
 	}
 }

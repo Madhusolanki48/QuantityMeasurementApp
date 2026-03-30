@@ -1,11 +1,20 @@
 package com.apps.quantitymeasurement.service;
-import com.apps.quantitymeasurement.entity.Quantity;
-import com.apps.quantitymeasurement.units.IMeasurable;
+
+import com.apps.quantitymeasurement.dto.*;
+import java.util.List;
 
 public interface IQuantityMeasurementService {
-	<U extends IMeasurable> Quantity<U> add(Quantity<U> q1, Quantity<U> q2);
+	QuantityMeasurementDTO add(QuantityRequestDTO input);
 
-	<U extends IMeasurable> Quantity<U> subtract(Quantity<U> q1, Quantity<U> q2);
+	QuantityMeasurementDTO subtract(QuantityRequestDTO input);
 
-	<U extends IMeasurable> double divide(Quantity<U> q1, Quantity<U> q2);
+	Double divide(QuantityRequestDTO input);
+
+	QuantityMeasurementDTO convert(QuantityRequestDTO input);
+
+	QuantityMeasurementDTO compare(QuantityRequestDTO input);
+
+	List<?> getHistory();
+
+	List<?> getByOperation(String operation);
 }

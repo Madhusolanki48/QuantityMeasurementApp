@@ -1,52 +1,54 @@
 package com.apps.quantitymeasurement.controller;
 
-import java.util.*;
-import com.apps.quantitymeasurement.entity.Quantity;
-import com.apps.quantitymeasurement.repository.IQuantityMeasurementRepository;
+import com.apps.quantitymeasurement.dto.QuantityRequestDTO;
+import com.apps.quantitymeasurement.dto.QuantityMeasurementDTO;
+import org.springframework.web.bind.annotation.*;
 import com.apps.quantitymeasurement.service.IQuantityMeasurementService;
-import com.apps.quantitymeasurement.units.IMeasurable;
 
+import jakarta.validation.Valid;
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/v1/measurements")
 public class QuantityMeasurementController {
 	private final IQuantityMeasurementService service;
-	private final IQuantityMeasurementRepository  repository;
 
-	public QuantityMeasurementController(IQuantityMeasurementService service,
-			IQuantityMeasurementRepository  repository) {
+	public QuantityMeasurementController(IQuantityMeasurementService service) {
 		this.service = service;
-		this.repository = repository;
 	}
 
-	public boolean checkEquality(Quantity<?> q1, Quantity<?> q2) {
-		return q1.equals(q2);
+	@PostMapping("/add")
+	public QuantityMeasurementDTO add(@Valid @RequestBody QuantityRequestDTO request) {
+		return service.add(request);
 	}
 
-	public <U extends IMeasurable> Quantity<U> convert(Quantity<U> quantity, U targetUnit) {
-		return quantity.convertTo(targetUnit);
+	@PostMapping("/subtract")
+	public QuantityMeasurementDTO subtract(@Valid @RequestBody QuantityRequestDTO request) {
+		return service.subtract(request);
 	}
 
-	public <U extends IMeasurable> Quantity<U> add(Quantity<U> q1, Quantity<U> q2) {
-		return service.add(q1, q2);
+	@PostMapping("/divide")
+	public Double divide(@Valid @RequestBody QuantityRequestDTO request) {
+		return service.divide(request);
 	}
 
-	public <U extends IMeasurable> Quantity<U> add(Quantity<U> q1, Quantity<U> q2, U targetUnit) {
-		Quantity<U> result = service.add(q1, q2);
-		return result.convertTo(targetUnit);
+	@PostMapping("/convert")
+	public QuantityMeasurementDTO convert(@Valid @RequestBody QuantityRequestDTO request) {
+		return service.convert(request);
 	}
 
-	public <U extends IMeasurable> Quantity<U> subtract(Quantity<U> q1, Quantity<U> q2) {
-		return service.subtract(q1, q2);
+	@PostMapping("/compare")
+	public QuantityMeasurementDTO compare(@Valid @RequestBody QuantityRequestDTO request) {
+		return service.compare(request);
 	}
 
-	public <U extends IMeasurable> Quantity<U> subtract(Quantity<U> q1, Quantity<U> q2, U targetUnit) {
-		Quantity<U> result = service.subtract(q1, q2);
-		return result.convertTo(targetUnit);
+	@GetMapping("/history")
+	public List<?> getAllHistory() {
+		return service.getHistory();
 	}
 
-	public <U extends IMeasurable> double divide(Quantity<U> q1, Quantity<U> q2) {
-		return service.divide(q1, q2);
-	}
-
-	public java.util.List<String> getHistory() {
-	    return repository.findAllHistory();
+	@GetMapping("/history/operation/{operation}")
+	public List<?> getByOperation(@PathVariable String operation) {
+		return service.getByOperation(operation.toUpperCase());
 	}
 }

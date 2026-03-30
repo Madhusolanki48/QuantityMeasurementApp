@@ -1,39 +1,88 @@
 package com.apps.quantitymeasurement.service;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.apps.quantitymeasurement.dto.*;
 import com.apps.quantitymeasurement.entity.Quantity;
-import com.apps.quantitymeasurement.repository.IQuantityMeasurementRepository;
-import com.apps.quantitymeasurement.units.IMeasurable;
+import com.apps.quantitymeasurement.entity.QuantityMeasurementEntity;
+import com.apps.quantitymeasurement.repository.QuantityMeasurementRepository;
+import com.apps.quantitymeasurement.utils.QuantityConverter;
 
+@Service
 public class QuantityMeasurementServiceImpl implements IQuantityMeasurementService {
-	private final IQuantityMeasurementRepository repository;
+	@Autowired
+	private QuantityMeasurementRepository repository;
 
-	public QuantityMeasurementServiceImpl(IQuantityMeasurementRepository repository) {
-		this.repository = repository;
+	@Override
+	public QuantityMeasurementDTO add(QuantityRequestDTO input) {
+		try {
+			Quantity q1 = QuantityConverter.toEntity(input.getFirst());
+			Quantity q2 = QuantityConverter.toEntity(input.getSecond());
+
+			Quantity result = q1.add(q2, q1.getUnit());
+
+			repository.save(new QuantityMeasurementEntity("ADD", q1.getValue(), q2.getValue(), result.getValue()));
+
+			return QuantityMeasurementDTO.success("ADD", result.getValue());
+
+		} catch (Exception e) {
+			repository.save(new QuantityMeasurementEntity("ADD", e.getMessage()));
+			return QuantityMeasurementDTO.failure("ADD", e.getMessage());
+		}
 	}
 
 	@Override
-	public <U extends IMeasurable> Quantity<U> add(Quantity<U> q1, Quantity<U> q2) {
+	public QuantityMeasurementDTO subtract(QuantityRequestDTO input) {
+		try {
+			Quantity q1 = QuantityConverter.toEntity(input.getFirst());
+			Quantity q2 = QuantityConverter.toEntity(input.getSecond());
 
-		Quantity<U> result = q1.add(q2, q1.getUnit());
+			Quantity result = q1.subtract(q2, q1.getUnit());
 
-		repository.save(q1.getUnit().getClass().getSimpleName(), "ADD", q1.getValue(), ((Enum<?>) q1.getUnit()).name(),
-				q2.getValue(), ((Enum<?>) q2.getUnit()).name(), result.getValue(), ((Enum<?>) result.getUnit()).name());
+			repository.save(new QuantityMeasurementEntity("SUBTRACT", q1.getValue(), q2.getValue(), result.getValue()));
 
-		return result;
+			return QuantityMeasurementDTO.success("SUBTRACT", result.getValue());
+
+		} catch (Exception e) {
+			return QuantityMeasurementDTO.failure("SUBTRACT", e.getMessage());
+		}
 	}
 
 	@Override
-	public <U extends IMeasurable> Quantity<U> subtract(Quantity<U> q1, Quantity<U> q2) {
-		Quantity<U> result = q1.subtract(q2, q1.getUnit());
-		repository.save(q1.getUnit().getClass().getSimpleName(), "SUBTRACT", q1.getValue(),
-				((Enum<?>) q1.getUnit()).name(), q2.getValue(), ((Enum<?>) q2.getUnit()).name(), result.getValue(),
-				((Enum<?>) result.getUnit()).name());
-
-		return result;
-	}
-
-	@Override
-	public <U extends IMeasurable> double divide(Quantity<U> q1, Quantity<U> q2) {
+	public Double divide(QuantityRequestDTO input) {
+		Quantity q1 = QuantityConverter.toEntity(input.getFirst());
+		Quantity q2 = QuantityConverter.toEntity(input.getSecond());
 		return q1.divide(q2);
+	}
+
+	@Override
+	public QuantityMeasurementDTO convert(QuantityRequestDTO input) {
+		Quantity q1 = QuantityConverter.toEntity(input.getFirst());
+		Quantity q2 = QuantityConverter.toEntity(input.getSecond());
+
+		Quantity result = q1.convertTo(q2.getUnit());
+
+		return QuantityMeasurementDTO.success("CONVERT", result.getValue());
+	}
+
+	@Override
+	public QuantityMeasurementDTO compare(QuantityRequestDTO input) {
+		Quantity q1 = QuantityConverter.toEntity(input.getFirst());
+		Quantity q2 = QuantityConverter.toEntity(input.getSecond());
+
+		boolean equal = q1.equals(q2);
+
+		return QuantityMeasurementDTO.success("COMPARE", equal ? 1.0 : 0.0);
+	}
+
+	@Override
+	public java.util.List<?> getHistory() {
+		return repository.findAll();
+	}
+
+	@Override
+	public java.util.List<?> getByOperation(String operation) {
+		return repository.findByOperation(operation);
 	}
 }
