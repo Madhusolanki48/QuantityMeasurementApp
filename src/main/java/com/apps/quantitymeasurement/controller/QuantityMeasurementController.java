@@ -11,6 +11,11 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/measurements")
 public class QuantityMeasurementController {
+	@GetMapping("/")
+	public String home() {
+		return "Login Successful!";
+	}
+
 	private final IQuantityMeasurementService service;
 
 	public QuantityMeasurementController(IQuantityMeasurementService service) {
