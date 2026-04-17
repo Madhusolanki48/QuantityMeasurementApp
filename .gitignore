@@ -1,18 +1,14 @@
 # Maven
 target/
 
-# Eclipse / IDE files
-.settings/
+# IDE (Eclipse/STS)
 .classpath
 .project
-
-# OS files
-.DS_Store
-Thumbs.db
+.settings/
+.factorypath
 
 # Logs
 *.log
 
-# Temporary files
-*.tmp
-*.swp/target/
+# OS
+.DS_Store
