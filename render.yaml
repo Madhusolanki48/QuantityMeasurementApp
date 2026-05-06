@@ -1,0 +1,49 @@
+services:
+  - name: eureka-server
+    type: web
+    runtime: docker
+    plan: free
+    rootDir: .
+    dockerfilePath: eureka-server/Dockerfile
+    dockerContext: .
+    healthCheckPath: /
+    autoDeployTrigger: commit
+
+  - name: user-service
+    type: web
+    runtime: docker
+    plan: free
+    rootDir: .
+    dockerfilePath: user-service/Dockerfile
+    dockerContext: .
+    healthCheckPath: /api/v1/users/
+    autoDeployTrigger: commit
+    envVars:
+      - key: EUREKA_DEFAULT_ZONE
+        sync: false
+
+  - name: measurement-service
+    type: web
+    runtime: docker
+    plan: free
+    rootDir: .
+    dockerfilePath: measurement-service/Dockerfile
+    dockerContext: .
+    healthCheckPath: /api/v1/measurements/
+    autoDeployTrigger: commit
+    envVars:
+      - key: EUREKA_DEFAULT_ZONE
+        sync: false
+
+  - name: api-gateway
+    type: web
+    runtime: docker
+    plan: free
+    rootDir: .
+    dockerfilePath: api-gateway/Dockerfile
+    dockerContext: .
+    healthCheckPath: /
+    autoDeployTrigger: commit
+    envVars:
+      - key: EUREKA_DEFAULT_ZONE
+        sync: false

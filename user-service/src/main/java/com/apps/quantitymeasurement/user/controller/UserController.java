@@ -35,6 +35,11 @@ public class UserController {
 		this.userService = userService;
 	}
 
+	@GetMapping("/")
+	public String home() {
+		return "User service is running";
+	}
+
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
 	public User create(@Valid @RequestBody User user) {

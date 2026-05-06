@@ -1,0 +1,15 @@
+.git
+.gitignore
+.idea
+.vscode
+.settings
+**/.classpath
+**/.project
+**/.factorypath
+**/target
+**/node_modules
+**/.angular
+measurement-service/data
+_frontend_extracted
+*.log
+.DS_Store
