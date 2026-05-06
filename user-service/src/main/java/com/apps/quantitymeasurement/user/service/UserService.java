@@ -57,6 +57,21 @@ public class UserService {
 				.toList();
 	}
 
+	public void deleteHistoryItem(Long userId, Long historyId) {
+		ConversionHistory history = historyRepository.findById(historyId)
+				.orElseThrow(() -> new IllegalArgumentException("History not found: " + historyId));
+
+		if (!history.getUserId().equals(userId)) {
+			throw new IllegalArgumentException("History does not belong to user: " + userId);
+		}
+
+		historyRepository.delete(history);
+	}
+
+	public void deleteAllHistory(Long userId) {
+		historyRepository.deleteByUserId(userId);
+	}
+
 	private ConversionHistoryResponse toResponse(ConversionHistory history) {
 		ConversionHistoryResponse response = new ConversionHistoryResponse();
 		response.setId(history.getId());

@@ -5,7 +5,7 @@ spring:
   application:
     name: measurement-service
   datasource:
-    url: jdbc:h2:mem:measurementdb
+    url: jdbc:h2:file:./data/measurementdb
     driver-class-name: org.h2.Driver
     username: sa
     password:
@@ -13,10 +13,15 @@ spring:
     hibernate:
       ddl-auto: update
     show-sql: true
+    defer-datasource-initialization: true
   h2:
     console:
       enabled: true
       path: /h2-console
+
+  sql:
+    init:
+      mode: always
 
 eureka:
   client:
