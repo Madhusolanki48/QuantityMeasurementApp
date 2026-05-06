@@ -22,7 +22,11 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 
 @RestController
 @RequestMapping("/api/v1/users")
-@CrossOrigin(originPatterns = { "http://localhost:*", "http://127.0.0.1:*" })
+@CrossOrigin(originPatterns = {
+		"http://localhost:*",
+		"http://127.0.0.1:*",
+		"https://*.onrender.com",
+		"https://*.render.com" })
 public class UserController {
 
 	private final UserService userService;

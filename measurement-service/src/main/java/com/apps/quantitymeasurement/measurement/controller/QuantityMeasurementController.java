@@ -18,7 +18,11 @@ import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/v1/measurements")
-@CrossOrigin(originPatterns = { "http://localhost:*", "http://127.0.0.1:*" })
+@CrossOrigin(originPatterns = {
+		"http://localhost:*",
+		"http://127.0.0.1:*",
+		"https://*.onrender.com",
+		"https://*.render.com" })
 public class QuantityMeasurementController {
 
 	private final IQuantityMeasurementService service;
